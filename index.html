@@ -3,152 +3,75 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>nnirvva SOL SNIPER • Final Working 2026</title>
+  <title>nnirvva SOL SNIPER • Phantom Buy Fixed</title>
   <style>
-    body {
-      margin: 0;
-      padding: 16px;
-      font-family: Arial, Helvetica, sans-serif;
-      background: #000000;
-      color: #ffffff;
-      line-height: 1.5;
+    body {margin:0;padding:16px;font-family:Arial,sans-serif;background:#000;color:#fff;line-height:1.5;}
+    h1 {text-align:center;margin:0 0 20px;font-size:2.1rem;color:#0f8;text-shadow:0 0 8px #0f8;}
+    .container {max-width:1400px;margin:0 auto;}
+    .controls {text-align:center;margin:16px 0 24px;display:flex;flex-wrap:wrap;gap:10px;justify-content:center;}
+    select,.btn {padding:9px 15px;margin:4px;border-radius:6px;border:1px solid #444;background:#111;color:white;font-size:0.95rem;}
+    .btn {cursor:pointer;background:#004d33;border-color:#0c6;}
+    .btn-connect {background:#222;border-color:#555;}
+    .btn-connect:hover {background:#333;}
+    .btn:disabled {opacity:0.5;cursor:not-allowed;}
+    .wallet-info {text-align:center;margin:10px 0;color:#0f8;font-weight:bold;font-size:1.05rem;}
+    .status {text-align:center;color:#aaa;margin:12px 0;font-size:0.95rem;}
+    .error {color:#f44;}
+    table {width:100%;border-collapse:collapse;background:#0a0a0a;border:1px solid #222;font-size:0.96rem;}
+    th,td {padding:11px 9px;border-bottom:1px solid #222;text-align:left;}
+    th {background:#111;color:#0f8;font-weight:normal;text-transform:uppercase;font-size:0.8rem;}
+    tr:hover {background:#161616;}
+    .buy-btn, .phantom-buy-btn {
+      background:#004d33;
+      color:#0f8;
+      padding:7px 14px;
+      border-radius:4px;
+      border:1px solid #0c6;
+      text-decoration:none;
+      font-weight:bold;
+      margin:0 4px;
     }
-    h1 {
-      text-align: center;
-      margin: 0 0 20px;
-      font-size: 2.1rem;
-      color: #00ff88;
-      text-shadow: 0 0 8px #00ff88;
+    .phantom-buy-btn {
+      background:#1a3c2e;
+      border-color:#0a6;
     }
-    .container { max-width: 1400px; margin: 0 auto; }
-    .controls {
-      text-align: center;
-      margin: 16px 0 24px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
+    .phantom-buy-btn:disabled {
+      opacity:0.5;
+      cursor:not-allowed;
     }
-    select, .btn {
-      padding: 9px 15px;
-      margin: 4px;
-      border-radius: 6px;
-      border: 1px solid #444;
-      background: #111;
-      color: white;
-      font-size: 0.95rem;
+    .positive {color:#0f8;}
+    .negative {color:#f44;}
+    .vol-high   {color:#00ff88;font-weight:bold;}
+    .vol-medium {color:#88ff88;}
+    .vol-low    {color:#ffff88;}
+    .vol-weak   {color:#aaaaaa;}
+    .ratio-strong-buy  {color:#00ff88;font-weight:bold;}
+    .ratio-buy         {color:#88ff88;}
+    .ratio-balanced    {color:#ffff88;}
+    .ratio-sell        {color:#ff8888;}
+    .ratio-strong-sell {color:#ff4444;font-weight:bold;}
+    .chart-box {margin:30px 0;border:1px solid #222;background:#000;height:380px;overflow:hidden;border-radius:6px;position:relative;display:none;}
+    .chart-box iframe {position:absolute;top:-85px;left:0;width:100%;height:760px;border:none;}
+    .alert {padding:16px;margin:16px 0;border-radius:8px;text-align:center;font-weight:bold;font-size:1.15rem;display:none;}
+    .alert-buy  {background:#002200;border:2px solid #0c6;color:#0f8;}
+    .alert-sell {background:#220000;border:2px solid #f44;color:#f88;}
+    @media (max-width:1100px){
+      th:nth-child(4),td:nth-child(4),th:nth-child(8),td:nth-child(8){display:none;}
     }
-    .btn { cursor: pointer; background: #004d33; border-color: #0c6; }
-    .btn-connect { background: #222; border-color: #555; }
-    .btn-connect:hover { background: #333; }
-    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .wallet-info { text-align: center; margin: 10px 0; color: #0f8; font-weight: bold; font-size: 1.05rem; }
-    .status { text-align: center; color: #aaa; margin: 12px 0; font-size: 0.95rem; }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: #0a0a0a;
-      border: 1px solid #222;
-      font-size: 0.96rem;
-    }
-    th, td {
-      padding: 11px 9px;
-      border-bottom: 1px solid #222;
-      text-align: left;
-    }
-    th {
-      background: #111;
-      color: #0f8;
-      font-weight: normal;
-      text-transform: uppercase;
-      font-size: 0.8rem;
-    }
-    tr:hover { background: #161616; }
-    .buy-btn {
-      background: #004d33;
-      color: #0f8;
-      padding: 7px 14px;
-      border-radius: 4px;
-      border: 1px solid #0c6;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    .buy-btn:hover { background: #006644; }
-    .positive { color: #0f8; }
-    .negative { color: #f44; }
-    /* Volume highlighting */
-    .vol-high   { color: #00ff88; font-weight: bold; }
-    .vol-medium { color: #88ff88; }
-    .vol-low    { color: #ffff88; }
-    .vol-weak   { color: #aaaaaa; }
-    /* Buy/Sell ratio highlighting */
-    .ratio-strong-buy  { color: #00ff88; font-weight: bold; }
-    .ratio-buy         { color: #88ff88; }
-    .ratio-balanced    { color: #ffff88; }
-    .ratio-sell        { color: #ff8888; }
-    .ratio-strong-sell { color: #ff4444; font-weight: bold; }
-    .chart-box {
-      margin: 30px 0;
-      border: 1px solid #222;
-      background: #000;
-      height: 380px;
-      overflow: hidden;
-      border-radius: 6px;
-      position: relative;
-      display: none;
-    }
-    .chart-box iframe {
-      position: absolute;
-      top: -85px;
-      left: 0;
-      width: 100%;
-      height: 760px;
-      border: none;
-    }
-    .alert {
-      padding: 16px;
-      margin: 16px 0;
-      border-radius: 8px;
-      text-align: center;
-      font-weight: bold;
-      font-size: 1.15rem;
-      display: none;
-    }
-    .alert-buy  { background: #002200; border: 2px solid #0c6; color: #0f8; }
-    .alert-sell { background: #220000; border: 2px solid #f44; color: #f88; }
-    @media (max-width:1100px) {
-      th:nth-child(4), td:nth-child(4),
-      th:nth-child(9), td:nth-child(9) { display: none; }
-    }
-    @media (max-width:800px) {
-      table, thead, tbody, th, td, tr { display: block; }
-      thead tr { position: absolute; top: -9999px; left: -9999px; }
-      tr { margin-bottom: 18px; border: 1px solid #333; border-radius: 6px; background: #0f0f0f; }
-      td {
-        border: none;
-        border-bottom: 1px solid #222;
-        position: relative;
-        padding-left: 48%;
-        min-height: 42px;
-      }
-      td:before {
-        position: absolute;
-        top: 11px;
-        left: 10px;
-        width: 45%;
-        padding-right: 10px;
-        white-space: nowrap;
-        color: #aaa;
-        content: attr(data-label);
-      }
-      td:last-child { text-align: center; padding: 12px; border-bottom: none; }
+    @media (max-width:800px){
+      table,thead,tbody,th,td,tr{display:block;}
+      thead tr{position:absolute;top:-9999px;left:-9999px;}
+      tr{margin-bottom:18px;border:1px solid #333;border-radius:6px;background:#0f0f0f;}
+      td{border:none;border-bottom:1px solid #222;position:relative;padding-left:48%;min-height:42px;}
+      td:before{position:absolute;top:11px;left:10px;width:45%;padding-right:10px;white-space:nowrap;color:#aaa;content:attr(data-label);}
+      td:last-child{text-align:center;padding:12px;border-bottom:none;}
     }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <h1>nnirvva SOL SNIPER • Final</h1>
+    <h1>nnirvva SOL SNIPER • Phantom Buy</h1>
 
     <div class="controls">
       <select id="liqFilter">
@@ -221,7 +144,7 @@
       <iframe id="dexChart" title="DexScreener Chart"></iframe>
     </div>
 
-    <div class="status">Auto-refresh every 60 seconds • Sorted by 24h volume • Volume & Ratio highlighted</div>
+    <div class="status">Auto-refresh every 60 seconds • Sorted by volume • Phantom Buy ready</div>
   </div>
 
   <audio id="beep" src="https://www.soundjay.com/buttons/beep-07.mp3"></audio>
@@ -242,39 +165,52 @@
     let prevSellTx   = 0;
     let prevVol      = 0;
     let timer        = null;
+    let provider     = null;
 
-    // Default automatic filters
+    // Default auto filters
     let minLiq = 10000;
     let maxFdv = 500000;
     let minVol = 100000;
-    let maxAge = 3600; // 1 hour
+    let maxAge = 3600;
 
-    // Set defaults in UI
     document.getElementById('liqFilter').value = minLiq;
     document.getElementById('fdvFilter').value = maxFdv;
     document.getElementById('volFilter').value = minVol;
     document.getElementById('ageFilter').value = maxAge;
 
-    // Filter listeners
     document.getElementById('liqFilter').onchange = e => { minLiq = Number(e.target.value); loadPairs(); };
     document.getElementById('fdvFilter').onchange = e => { maxFdv = Number(e.target.value); loadPairs(); };
     document.getElementById('volFilter').onchange = e => { minVol = Number(e.target.value); loadPairs(); };
     document.getElementById('ageFilter').onchange = e => { maxAge = Number(e.target.value); loadPairs(); };
 
-    // Phantom connect
+    // Improved Phantom connect
     connectBtn.onclick = async () => {
-      if (!window.solana?.isPhantom) {
-        status.textContent = "Install Phantom wallet";
+      provider = window.solana || window.phantom?.solana;
+
+      if (!provider || !provider.isPhantom) {
+        status.textContent = "Phantom wallet not detected. Install from phantom.app";
+        status.classList.add('error');
         return;
       }
+
+      status.textContent = "Connecting Phantom...";
+      status.classList.remove('error');
+
       try {
-        await window.solana.connect();
-        const addr = window.solana.publicKey.toString();
+        await provider.connect();
+        const addr = provider.publicKey.toString();
         walletInfo.textContent = `Connected: ${addr.slice(0,6)}...${addr.slice(-4)}`;
-        connectBtn.textContent = "Connected";
+        connectBtn.textContent = "Connected ✓";
         connectBtn.disabled = true;
-      } catch (e) {
-        status.textContent = "Connection rejected";
+        status.textContent = "Phantom ready for buys!";
+      } catch (err) {
+        if (err.code === 4001) {
+          status.textContent = "You rejected the connection";
+        } else {
+          status.textContent = "Connection failed: " + (err.message || "Unknown error");
+        }
+        status.classList.add('error');
+        console.error("Phantom connect error:", err);
       }
     };
 
@@ -348,9 +284,11 @@
           const chCls = ch24 > 0 ? 'positive' : ch24 < 0 ? 'negative' : '';
 
           const vol24Class = getVolClass(vol24);
-          const vol5mClass = getVolClass(vol5mRaw * 10); // scale 5m to feel like 24h
+          const vol5mClass = getVolClass(vol5mRaw * 10);
           const ratioClass = getRatioClass(buyTx, sellTx);
           const ratioText  = formatRatio(buyTx, sellTx);
+
+          const dsUrl = `https://dexscreener.com/solana/${p.pairAddress}`;
 
           html += `
             <tr>
@@ -367,17 +305,18 @@
               <td data-label="FDV">$${fdv}</td>
               <td data-label="Age">${age}</td>
               <td data-label="Actions">
-                <a class="buy-btn" href="https://dexscreener.com/solana/${p.pairAddress}" target="_blank">Buy</a>
+                <a class="buy-btn" href="${dsUrl}" target="_blank">Buy on Dex</a>
+                <a class="phantom-buy-btn" href="${dsUrl}" target="_blank">Phantom Buy</a>
                 <a href="#" onclick="watchPair('${p.pairAddress}','${p.baseToken.symbol}')">Watch</a>
               </td>
             </tr>
           `;
         });
 
-        pairsEl.innerHTML = html || '<tr><td colspan="13" style="text-align:center;padding:50px;color:#555;">No high-volume fresh gems right now</td></tr>';
+        pairsEl.innerHTML = html || '<tr><td colspan="13" style="text-align:center;padding:50px;color:#555;">No matching fresh high-volume gems right now</td></tr>';
         status.textContent = `Updated ${new Date().toLocaleTimeString()} • ${filtered.length} sorted by volume`;
       } catch (e) {
-        status.textContent = "API slow – retrying...";
+        status.textContent = "API slow or blocked – retrying in 60s...";
       }
     }
 
@@ -398,7 +337,8 @@
     async function checkAlerts() {
       if (!watching) return;
       try {
-        const { pair } = await (await fetch(`https://api.dexscreener.com/latest/dex/pairs/solana/${watching}`)).json();
+        const res = await fetch(`https://api.dexscreener.com/latest/dex/pairs/solana/${watching}`);
+        const { pair } = await res.json();
         if (!pair) return;
 
         const buyTx  = pair.txns?.m5?.buys || 0;
@@ -412,18 +352,20 @@
         if (bDelta >= 8 || (vDelta > 12000 && buyTx > sellTx * 1.4)) {
           buyAlert.textContent = `BUY ALERT • ${bDelta} buys • +$${Math.round(vDelta).toLocaleString()}`;
           buyAlert.style.display = 'block';
-          beep.play();
+          beep.play().catch(() => {});
           setTimeout(() => buyAlert.style.display = 'none', 15000);
         }
         if (sDelta >= 8 || (vDelta > 10000 && sellTx > buyTx * 1.4)) {
           sellAlert.textContent = `SELL ALERT • ${sDelta} sells dumping`;
           sellAlert.style.display = 'block';
-          beep.play();
+          beep.play().catch(() => {});
           setTimeout(() => sellAlert.style.display = 'none', 15000);
         }
 
-        prevBuyTx = buyTx; prevSellTx = sellTx; prevVol = vol5m;
-      } catch {}
+        prevBuyTx = buyTx;
+        prevSellTx = sellTx;
+        prevVol = vol5m;
+      } catch (e) {}
     }
 
     // Start fully automatic
