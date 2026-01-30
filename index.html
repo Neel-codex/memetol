@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>nnirvva SOL SNIPER • Phantom Buy Fixed</title>
+  <title>nnirvva SOL SNIPER • Final Deploy</title>
   <style>
     body {margin:0;padding:16px;font-family:Arial,sans-serif;background:#000;color:#fff;line-height:1.5;}
     h1 {text-align:center;margin:0 0 20px;font-size:2.1rem;color:#0f8;text-shadow:0 0 8px #0f8;}
@@ -35,10 +35,7 @@
       background:#1a3c2e;
       border-color:#0a6;
     }
-    .phantom-buy-btn:disabled {
-      opacity:0.5;
-      cursor:not-allowed;
-    }
+    .phantom-buy-btn:disabled {opacity:0.5;cursor:not-allowed;}
     .positive {color:#0f8;}
     .negative {color:#f44;}
     .vol-high   {color:#00ff88;font-weight:bold;}
@@ -56,7 +53,7 @@
     .alert-buy  {background:#002200;border:2px solid #0c6;color:#0f8;}
     .alert-sell {background:#220000;border:2px solid #f44;color:#f88;}
     @media (max-width:1100px){
-      th:nth-child(4),td:nth-child(4),th:nth-child(8),td:nth-child(8){display:none;}
+      th:nth-child(4),td:nth-child(4),th:nth-child(9),td:nth-child(9){display:none;}
     }
     @media (max-width:800px){
       table,thead,tbody,th,td,tr{display:block;}
@@ -71,7 +68,7 @@
 <body>
 
   <div class="container">
-    <h1>nnirvva SOL SNIPER • Phantom Buy</h1>
+    <h1>nnirvva SOL SNIPER • Final Deploy</h1>
 
     <div class="controls">
       <select id="liqFilter">
@@ -144,7 +141,7 @@
       <iframe id="dexChart" title="DexScreener Chart"></iframe>
     </div>
 
-    <div class="status">Auto-refresh every 60 seconds • Sorted by volume • Phantom Buy ready</div>
+    <div class="status">Auto-refresh every 60 seconds • Sorted by volume • Volume & Ratio highlighted</div>
   </div>
 
   <audio id="beep" src="https://www.soundjay.com/buttons/beep-07.mp3"></audio>
@@ -167,23 +164,25 @@
     let timer        = null;
     let provider     = null;
 
-    // Default auto filters
+    // Default automatic filters (fully automatic mode)
     let minLiq = 10000;
     let maxFdv = 500000;
     let minVol = 100000;
-    let maxAge = 3600;
+    let maxAge = 3600; // 1 hour
 
+    // Set defaults in dropdowns
     document.getElementById('liqFilter').value = minLiq;
     document.getElementById('fdvFilter').value = maxFdv;
     document.getElementById('volFilter').value = minVol;
     document.getElementById('ageFilter').value = maxAge;
 
+    // Filter change listeners
     document.getElementById('liqFilter').onchange = e => { minLiq = Number(e.target.value); loadPairs(); };
     document.getElementById('fdvFilter').onchange = e => { maxFdv = Number(e.target.value); loadPairs(); };
     document.getElementById('volFilter').onchange = e => { minVol = Number(e.target.value); loadPairs(); };
     document.getElementById('ageFilter').onchange = e => { maxAge = Number(e.target.value); loadPairs(); };
 
-    // Improved Phantom connect
+    // Improved Phantom connect with full error handling
     connectBtn.onclick = async () => {
       provider = window.solana || window.phantom?.solana;
 
@@ -193,7 +192,7 @@
         return;
       }
 
-      status.textContent = "Connecting Phantom...";
+      status.textContent = "Connecting to Phantom...";
       status.classList.remove('error');
 
       try {
@@ -202,7 +201,7 @@
         walletInfo.textContent = `Connected: ${addr.slice(0,6)}...${addr.slice(-4)}`;
         connectBtn.textContent = "Connected ✓";
         connectBtn.disabled = true;
-        status.textContent = "Phantom ready for buys!";
+        status.textContent = "Phantom ready – Phantom Buy buttons active!";
       } catch (err) {
         if (err.code === 4001) {
           status.textContent = "You rejected the connection";
@@ -245,6 +244,8 @@
 
       try {
         const res = await fetch('https://api.dexscreener.com/latest/dex/search?q=sol');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
         const { pairs } = await res.json();
 
         const now = Date.now();
@@ -317,6 +318,7 @@
         status.textContent = `Updated ${new Date().toLocaleTimeString()} • ${filtered.length} sorted by volume`;
       } catch (e) {
         status.textContent = "API slow or blocked – retrying in 60s...";
+        console.error("DexScreener fetch error:", e);
       }
     }
 
@@ -368,7 +370,7 @@
       } catch (e) {}
     }
 
-    // Start fully automatic
+    // Start fully automatic scanning
     loadPairs();
     setInterval(loadPairs, 60000);
   </script>
