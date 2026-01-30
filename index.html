@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>SOL Meme Finder • DexScreener + Phantom</title>
+  <title>nnirvva SOL SNIPER • Final Working 2026</title>
   <style>
     body {
       margin: 0;
@@ -13,56 +13,37 @@
       color: #ffffff;
       line-height: 1.5;
     }
-
     h1 {
       text-align: center;
       margin: 0 0 20px;
-      font-size: 2rem;
+      font-size: 2.1rem;
+      color: #00ff88;
+      text-shadow: 0 0 8px #00ff88;
     }
-
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-    }
-
-    .status {
+    .container { max-width: 1400px; margin: 0 auto; }
+    .controls {
       text-align: center;
-      color: #888;
-      margin: 12px 0 20px;
-      font-size: 0.95rem;
+      margin: 16px 0 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
     }
-
-    .wallet-info {
-      text-align: center;
-      margin: 10px 0 16px;
-      color: #0f8;
-      font-weight: bold;
-      font-size: 1.05rem;
-    }
-
-    .btn {
-      padding: 8px 14px;
-      margin: 0 6px 12px;
+    select, .btn {
+      padding: 9px 15px;
+      margin: 4px;
       border-radius: 6px;
       border: 1px solid #444;
       background: #111;
       color: white;
-      cursor: pointer;
       font-size: 0.95rem;
     }
-
-    .btn-connect {
-      background: #222;
-      border-color: #555;
-    }
-
+    .btn { cursor: pointer; background: #004d33; border-color: #0c6; }
+    .btn-connect { background: #222; border-color: #555; }
     .btn-connect:hover { background: #333; }
-
-    .btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .wallet-info { text-align: center; margin: 10px 0; color: #0f8; font-weight: bold; font-size: 1.05rem; }
+    .status { text-align: center; color: #aaa; margin: 12px 0; font-size: 0.95rem; }
     table {
       width: 100%;
       border-collapse: collapse;
@@ -70,42 +51,42 @@
       border: 1px solid #222;
       font-size: 0.96rem;
     }
-
     th, td {
       padding: 11px 9px;
       border-bottom: 1px solid #222;
       text-align: left;
     }
-
     th {
       background: #111;
-      color: #ccc;
+      color: #0f8;
       font-weight: normal;
       text-transform: uppercase;
       font-size: 0.8rem;
     }
-
-    tr:hover {
-      background: #161616;
-    }
-
+    tr:hover { background: #161616; }
     .buy-btn {
       background: #004d33;
       color: #0f8;
-      padding: 6px 12px;
+      padding: 7px 14px;
       border-radius: 4px;
       border: 1px solid #0c6;
       text-decoration: none;
-      font-size: 0.88rem;
+      font-weight: bold;
     }
-
-    .buy-btn:hover {
-      background: #006644;
-    }
-
+    .buy-btn:hover { background: #006644; }
     .positive { color: #0f8; }
     .negative { color: #f44; }
-
+    /* Volume highlighting */
+    .vol-high   { color: #00ff88; font-weight: bold; }
+    .vol-medium { color: #88ff88; }
+    .vol-low    { color: #ffff88; }
+    .vol-weak   { color: #aaaaaa; }
+    /* Buy/Sell ratio highlighting */
+    .ratio-strong-buy  { color: #00ff88; font-weight: bold; }
+    .ratio-buy         { color: #88ff88; }
+    .ratio-balanced    { color: #ffff88; }
+    .ratio-sell        { color: #ff8888; }
+    .ratio-strong-sell { color: #ff4444; font-weight: bold; }
     .chart-box {
       margin: 30px 0;
       border: 1px solid #222;
@@ -116,7 +97,6 @@
       position: relative;
       display: none;
     }
-
     .chart-box iframe {
       position: absolute;
       top: -85px;
@@ -125,36 +105,25 @@
       height: 760px;
       border: none;
     }
-
     .alert {
-      padding: 14px;
+      padding: 16px;
       margin: 16px 0;
-      border-radius: 6px;
+      border-radius: 8px;
       text-align: center;
       font-weight: bold;
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       display: none;
     }
-
     .alert-buy  { background: #002200; border: 2px solid #0c6; color: #0f8; }
     .alert-sell { background: #220000; border: 2px solid #f44; color: #f88; }
-
-    /* ── Mobile responsive table ── */
-    @media (max-width: 950px) {
-      th:nth-child(4), td:nth-child(4),   /* Vol 24h */
-      th:nth-child(8), td:nth-child(8)    /* 5m Vol */
-      { display: none; }
+    @media (max-width:1100px) {
+      th:nth-child(4), td:nth-child(4),
+      th:nth-child(9), td:nth-child(9) { display: none; }
     }
-
-    @media (max-width: 800px) {
+    @media (max-width:800px) {
       table, thead, tbody, th, td, tr { display: block; }
       thead tr { position: absolute; top: -9999px; left: -9999px; }
-      tr {
-        margin-bottom: 18px;
-        border: 1px solid #333;
-        border-radius: 6px;
-        background: #0f0f0f;
-      }
+      tr { margin-bottom: 18px; border: 1px solid #333; border-radius: 6px; background: #0f0f0f; }
       td {
         border: none;
         border-bottom: 1px solid #222;
@@ -172,23 +141,57 @@
         color: #aaa;
         content: attr(data-label);
       }
-      td:last-child {
-        text-align: center;
-        padding: 12px;
-        border-bottom: none;
-      }
+      td:last-child { text-align: center; padding: 12px; border-bottom: none; }
     }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <h1>SOL Meme Finder • DexScreener</h1>
+    <h1>nnirvva SOL SNIPER • Final</h1>
 
-    <div class="status" id="status">Loading pairs...</div>
+    <div class="controls">
+      <select id="liqFilter">
+        <option value="0">Liq: Any</option>
+        <option value="5000">> $5k</option>
+        <option value="10000" selected>> $10k</option>
+        <option value="25000">> $25k</option>
+        <option value="50000">> $50k</option>
+        <option value="100000">> $100k</option>
+      </select>
+
+      <select id="fdvFilter">
+        <option value="999999999">FDV: Any</option>
+        <option value="100000">FDV < $100k</option>
+        <option value="250000">FDV < $250k</option>
+        <option value="500000" selected>FDV < $500k</option>
+        <option value="1000000">FDV < $1M</option>
+      </select>
+
+      <select id="volFilter">
+        <option value="0">Vol 24h: Any</option>
+        <option value="10000">> $10k</option>
+        <option value="50000">> $50k</option>
+        <option value="100000" selected>> $100k</option>
+        <option value="250000">> $250k</option>
+        <option value="500000">> $500k</option>
+        <option value="1000000">> $1M</option>
+      </select>
+
+      <select id="ageFilter">
+        <option value="999999999">Age: Any</option>
+        <option value="300">Newer than 5 min</option>
+        <option value="900">Newer than 15 min</option>
+        <option value="3600" selected>Newer than 1h</option>
+        <option value="21600">Newer than 6h</option>
+        <option value="86400">Newer than 24h</option>
+      </select>
+
+      <button id="connectBtn" class="btn btn-connect">Connect Phantom</button>
+    </div>
+
     <div class="wallet-info" id="walletInfo">Wallet: Not connected</div>
-
-    <button id="connectBtn" class="btn btn-connect">Connect Phantom</button>
+    <div class="status" id="status">Scanning fresh high-volume Solana launches...</div>
 
     <div id="buyAlert" class="alert alert-buy"></div>
     <div id="sellAlert" class="alert alert-sell"></div>
@@ -203,7 +206,11 @@
           <th>5m Txns</th>
           <th>5m Buy Tx</th>
           <th>5m Sell Tx</th>
+          <th>B/S Ratio (5m)</th>
           <th>5m Vol</th>
+          <th>Liq</th>
+          <th>FDV</th>
+          <th>Age</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -214,16 +221,12 @@
       <iframe id="dexChart" title="DexScreener Chart"></iframe>
     </div>
 
-    <div class="status">Auto-refresh every 60 seconds</div>
+    <div class="status">Auto-refresh every 60 seconds • Sorted by 24h volume • Volume & Ratio highlighted</div>
   </div>
 
   <audio id="beep" src="https://www.soundjay.com/buttons/beep-07.mp3"></audio>
 
   <script>
-    // ──────────────────────────────────────────────
-    // Phantom + DexScreener + Buy/Sell Alerts
-    // ──────────────────────────────────────────────
-
     const status     = document.getElementById('status');
     const walletInfo = document.getElementById('walletInfo');
     const connectBtn = document.getElementById('connectBtn');
@@ -234,143 +237,196 @@
     const sellAlert  = document.getElementById('sellAlert');
     const beep       = document.getElementById('beep');
 
-    let publicKey    = null;
     let watching     = null;
     let prevBuyTx    = 0;
     let prevSellTx   = 0;
     let prevVol      = 0;
     let timer        = null;
 
-    // Connect Phantom
-    async function connectWallet() {
-      if (!window.solana || !window.solana.isPhantom) {
-        status.textContent = "Phantom wallet not found. Install from phantom.app";
+    // Default automatic filters
+    let minLiq = 10000;
+    let maxFdv = 500000;
+    let minVol = 100000;
+    let maxAge = 3600; // 1 hour
+
+    // Set defaults in UI
+    document.getElementById('liqFilter').value = minLiq;
+    document.getElementById('fdvFilter').value = maxFdv;
+    document.getElementById('volFilter').value = minVol;
+    document.getElementById('ageFilter').value = maxAge;
+
+    // Filter listeners
+    document.getElementById('liqFilter').onchange = e => { minLiq = Number(e.target.value); loadPairs(); };
+    document.getElementById('fdvFilter').onchange = e => { maxFdv = Number(e.target.value); loadPairs(); };
+    document.getElementById('volFilter').onchange = e => { minVol = Number(e.target.value); loadPairs(); };
+    document.getElementById('ageFilter').onchange = e => { maxAge = Number(e.target.value); loadPairs(); };
+
+    // Phantom connect
+    connectBtn.onclick = async () => {
+      if (!window.solana?.isPhantom) {
+        status.textContent = "Install Phantom wallet";
         return;
       }
-
       try {
-        const resp = await window.solana.connect();
-        publicKey = resp.publicKey.toString();
-        walletInfo.textContent = `Connected: ${publicKey.slice(0,6)}...${publicKey.slice(-4)}`;
+        await window.solana.connect();
+        const addr = window.solana.publicKey.toString();
+        walletInfo.textContent = `Connected: ${addr.slice(0,6)}...${addr.slice(-4)}`;
         connectBtn.textContent = "Connected";
         connectBtn.disabled = true;
-        status.textContent = "Phantom connected successfully";
-      } catch (err) {
-        status.textContent = "Connection failed / rejected";
-        console.error(err);
+      } catch (e) {
+        status.textContent = "Connection rejected";
       }
+    };
+
+    // Volume class helper
+    function getVolClass(vol) {
+      vol = Number(vol) || 0;
+      if (vol > 500000) return 'vol-high';
+      if (vol > 100000) return 'vol-medium';
+      if (vol > 50000)  return 'vol-low';
+      return 'vol-weak';
     }
 
-    connectBtn.onclick = connectWallet;
+    // Buy/Sell ratio helpers
+    function getRatioClass(buys, sells) {
+      if (sells === 0) return buys > 0 ? 'ratio-strong-buy' : 'vol-weak';
+      if (buys === 0) return 'ratio-strong-sell';
+      const ratio = buys / sells;
+      if (ratio > 2.0) return 'ratio-strong-buy';
+      if (ratio > 1.2) return 'ratio-buy';
+      if (ratio > 0.8) return 'ratio-balanced';
+      if (ratio > 0.5) return 'ratio-sell';
+      return 'ratio-strong-sell';
+    }
+
+    function formatRatio(buys, sells) {
+      if (sells === 0) return buys > 0 ? '∞:1' : '0:1';
+      return (buys / sells).toFixed(1) + ':1';
+    }
 
     async function loadPairs() {
-      status.textContent = "Loading Solana pairs...";
+      status.textContent = "Scanning fresh high-volume Solana launches...";
 
       try {
         const res = await fetch('https://api.dexscreener.com/latest/dex/search?q=sol');
-        const data = await res.json();
+        const { pairs } = await res.json();
 
-        const solPairs = (data.pairs || []).filter(p =>
+        const now = Date.now();
+
+        let filtered = (pairs || []).filter(p =>
           p.chainId === 'solana' &&
           p.quoteToken?.symbol === 'SOL' &&
-          p.fdv < 30000000
-        ).slice(0, 40);
+          Number(p.liquidity?.usd || 0) >= minLiq &&
+          Number(p.fdv || 0) <= maxFdv &&
+          Number(p.volume?.h24 || 0) >= minVol &&
+          (now - new Date(p.pairCreatedAt).getTime()) / 1000 <= maxAge
+        );
+
+        // Auto-sort by 24h volume descending
+        filtered.sort((a, b) => Number(b.volume?.h24 || 0) - Number(a.volume?.h24 || 0));
+
+        filtered = filtered.slice(0, 40);
 
         let html = '';
-        solPairs.forEach(p => {
+        filtered.forEach(p => {
+          const ageSec = Math.floor((now - new Date(p.pairCreatedAt).getTime()) / 1000);
+          const age = ageSec < 60 ? `${ageSec}s` :
+                      ageSec < 3600 ? `${Math.floor(ageSec/60)}m` :
+                      ageSec < 86400 ? `${Math.floor(ageSec/3600)}h` : `${Math.floor(ageSec/86400)}d`;
+
           const price = Number(p.priceUsd || 0).toFixed(6);
           const ch24  = (p.priceChange?.h24 || 0).toFixed(1);
-          const vol24 = Number(p.volume?.h24  || 0).toLocaleString();
-
-          const tx5m   = (p.txns?.m5?.buys || 0) + (p.txns?.m5?.sells || 0);
-          const buyTx  = p.txns?.m5?.buys  || 0;
-          const sellTx = p.txns?.m5?.sells || 0;
-          const vol5m  = Number(p.volume?.m5  || 0).toLocaleString();
-
+          const vol24 = Number(p.volume?.h24  || 0);
+          const vol24Str = vol24.toLocaleString();
+          const tx5m  = (p.txns?.m5?.buys || 0) + (p.txns?.m5?.sells || 0);
+          const buyTx = p.txns?.m5?.buys || 0;
+          const sellTx= p.txns?.m5?.sells || 0;
+          const vol5mRaw = Number(p.volume?.m5  || 0);
+          const vol5mStr = vol5mRaw.toLocaleString();
+          const liq   = Number(p.liquidity?.usd || 0).toLocaleString();
+          const fdv   = Number(p.fdv || 0).toLocaleString();
           const chCls = ch24 > 0 ? 'positive' : ch24 < 0 ? 'negative' : '';
 
-          const dsUrl = `https://dexscreener.com/solana/${p.pairAddress}`;
+          const vol24Class = getVolClass(vol24);
+          const vol5mClass = getVolClass(vol5mRaw * 10); // scale 5m to feel like 24h
+          const ratioClass = getRatioClass(buyTx, sellTx);
+          const ratioText  = formatRatio(buyTx, sellTx);
 
           html += `
             <tr>
               <td data-label="Token"><strong>${p.baseToken.symbol}</strong><br><small>${p.baseToken.name}</small></td>
               <td data-label="Price">$${price}</td>
               <td data-label="24h %" class="${chCls}">${ch24}%</td>
-              <td data-label="Vol 24h">$${vol24}</td>
+              <td data-label="Vol 24h" class="${vol24Class}">$${vol24Str}</td>
               <td data-label="5m Txns">${tx5m}</td>
               <td data-label="5m Buy Tx">${buyTx}</td>
               <td data-label="5m Sell Tx">${sellTx}</td>
-              <td data-label="5m Vol">$${vol5m}</td>
+              <td data-label="B/S Ratio (5m)" class="${ratioClass}">${ratioText}</td>
+              <td data-label="5m Vol" class="${vol5mClass}">$${vol5mStr}</td>
+              <td data-label="Liq">$${liq}</td>
+              <td data-label="FDV">$${fdv}</td>
+              <td data-label="Age">${age}</td>
               <td data-label="Actions">
-                <a class="buy-btn" href="${dsUrl}" target="_blank">Buy</a>
-                <a href="#" onclick="watchPair('${p.pairAddress}', '${p.baseToken.symbol}')">Watch</a>
+                <a class="buy-btn" href="https://dexscreener.com/solana/${p.pairAddress}" target="_blank">Buy</a>
+                <a href="#" onclick="watchPair('${p.pairAddress}','${p.baseToken.symbol}')">Watch</a>
               </td>
             </tr>
           `;
         });
 
-        pairsEl.innerHTML = html || '<tr><td colspan="9" style="text-align:center;padding:40px;color:#555;">No pairs found</td></tr>';
-        status.textContent = `Updated ${new Date().toLocaleTimeString()}`;
-      } catch (err) {
-        status.textContent = "Load failed – retrying soon...";
+        pairsEl.innerHTML = html || '<tr><td colspan="13" style="text-align:center;padding:50px;color:#555;">No high-volume fresh gems right now</td></tr>';
+        status.textContent = `Updated ${new Date().toLocaleTimeString()} • ${filtered.length} sorted by volume`;
+      } catch (e) {
+        status.textContent = "API slow – retrying...";
       }
     }
 
-    function watchPair(addr, symbol) {
+    function watchPair(addr, sym) {
       watching = addr;
       chartBox.style.display = 'block';
       dexChart.src = `https://dexscreener.com/solana/${addr}`;
-      window.scrollTo({ top: chartBox.offsetTop - 80, behavior: 'smooth' });
-      status.textContent = `Watching ${symbol} – alerts active`;
+      window.scrollTo({top: chartBox.offsetTop - 80, behavior: 'smooth'});
+      status.textContent = `Watching ${sym} – alerts ON`;
 
-      buyAlert.style.display = 'none';
-      sellAlert.style.display = 'none';
-      prevBuyTx = 0;
-      prevSellTx = 0;
-      prevVol = 0;
-
+      buyAlert.style.display = sellAlert.style.display = 'none';
+      prevBuyTx = prevSellTx = prevVol = 0;
       if (timer) clearInterval(timer);
-      checkActivity();
-      timer = setInterval(checkActivity, 16000);
+      checkAlerts();
+      timer = setInterval(checkAlerts, 15000);
     }
 
-    async function checkActivity() {
+    async function checkAlerts() {
       if (!watching) return;
-
       try {
-        const res = await fetch(`https://api.dexscreener.com/latest/dex/pairs/solana/${watching}`);
-        const { pair } = await res.json();
+        const { pair } = await (await fetch(`https://api.dexscreener.com/latest/dex/pairs/solana/${watching}`)).json();
         if (!pair) return;
 
-        const buyTx   = pair.txns?.m5?.buys  || 0;
-        const sellTx  = pair.txns?.m5?.sells || 0;
-        const vol5m   = pair.volume?.m5     || 0;
+        const buyTx  = pair.txns?.m5?.buys || 0;
+        const sellTx = pair.txns?.m5?.sells || 0;
+        const vol5m  = pair.volume?.m5 || 0;
 
-        const buyDelta  = buyTx  - prevBuyTx;
-        const sellDelta = sellTx - prevSellTx;
-        const volDelta  = vol5m  - prevVol;
+        const bDelta = buyTx - prevBuyTx;
+        const sDelta = sellTx - prevSellTx;
+        const vDelta = vol5m - prevVol;
 
-        if (buyDelta >= 8 || (volDelta > 11000 && buyTx > sellTx * 1.3)) {
-          buyAlert.textContent = `BUY ALERT • ${buyDelta} new buy tx • volume ~$${Math.round(volDelta).toLocaleString()}`;
+        if (bDelta >= 8 || (vDelta > 12000 && buyTx > sellTx * 1.4)) {
+          buyAlert.textContent = `BUY ALERT • ${bDelta} buys • +$${Math.round(vDelta).toLocaleString()}`;
           buyAlert.style.display = 'block';
-          beep.play().catch(() => {});
-          setTimeout(() => buyAlert.style.display = 'none', 14000);
+          beep.play();
+          setTimeout(() => buyAlert.style.display = 'none', 15000);
         }
-
-        if (sellDelta >= 8 || (volDelta > 9000 && sellTx > buyTx * 1.3)) {
-          sellAlert.textContent = `SELL ALERT • ${sellDelta} new sell tx`;
+        if (sDelta >= 8 || (vDelta > 10000 && sellTx > buyTx * 1.4)) {
+          sellAlert.textContent = `SELL ALERT • ${sDelta} sells dumping`;
           sellAlert.style.display = 'block';
-          beep.play().catch(() => {});
-          setTimeout(() => sellAlert.style.display = 'none', 14000);
+          beep.play();
+          setTimeout(() => sellAlert.style.display = 'none', 15000);
         }
 
-        prevBuyTx  = buyTx;
-        prevSellTx = sellTx;
-        prevVol    = vol5m;
+        prevBuyTx = buyTx; prevSellTx = sellTx; prevVol = vol5m;
       } catch {}
     }
 
-    // ── Start ──
+    // Start fully automatic
     loadPairs();
     setInterval(loadPairs, 60000);
   </script>
