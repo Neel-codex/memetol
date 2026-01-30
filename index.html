@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOL MEME SNIPER • Whale Radar</title>
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --card: rgba(20, 20, 35, 0.7);
+            --text: #e0e0ff;
+            --text-dim: #a0a0cc;
+            --accent: #00ffea;
+            --green: #00ff9d;
+            --purple: #c300ff;
+            --red: #ff2e63;
+            --blue: #00aaff;
+            --border: rgba(0, 255, 234, 0.18);
+            --glow: 0 0 15px rgba(0, 255, 234, 0.5);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: 'Segoe UI', 'Roboto Mono', monospace;
+            background: linear-gradient(135deg, #0a0a0f 0%, #000814 100%);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px 15px;
+            background-attachment: fixed;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.8rem;
+            background: linear-gradient(90deg, var(--accent), var(--purple), var(--blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 20px 0 8px;
+            text-shadow: var(--glow);
+            letter-spacing: 2px;
+        }
+        .subtitle {
+            text-align: center;
+            color: var(--text-dim);
+            margin-bottom: 35px;
+            font-size: 1.1rem;
+        }
+        .controls {
+            text-align: center;
+            margin: 25px 0 40px;
+        }
+        input, select, button {
+            padding: 14px 18px;
+            margin: 8px;
+            border-radius: 10px;
+            font-size: 1rem;
+            border: 1px solid var(--border);
+            background: rgba(30, 30, 50, 0.6);
+            color: var(--text);
+            backdrop-filter: blur(6px);
+            transition: all 0.3s;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: var(--glow);
+        }
+        button {
+            background: linear-gradient(45deg, var(--purple), var(--blue));
+            border: none;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(195, 0, 255, 0.4);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--card);
+            border-radius: 14px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.7);
+        }
+        th {
+            background: rgba(10, 10, 20, 0.8);
+            padding: 16px;
+            text-align: left;
+            color: var(--accent);
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid var(--border);
+        }
+        td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(0,255,234,0.08);
+        }
+        tr:hover {
+            background: rgba(0, 255, 234, 0.08);
+        }
+        a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: bold;
+        }
+        a:hover { text-decoration: underline; text-shadow: var(--glow); }
+        .change-up { color: var(--green); font-weight: bold; }
+        .change-down { color: var(--red); font-weight: bold; }
+        #whaleAlerts {
+            margin: 60px auto 0;
+            max-width: 1100px;
+            padding: 25px;
+            background: var(--card);
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+        }
+        #whaleAlerts h2 {
+            color: var(--green);
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(0,255,157,0.6);
+        }
+        #alertsList {
+            list-style: none;
+        }
+        #alertsList li {
+            padding: 16px 20px;
+            margin: 12px 0;
+            border-radius: 10px;
+            font-weight: bold;
+            animation: fadeIn 0.6s ease-out;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        .buy {
+            background: linear-gradient(135deg, rgba(0,50,30,0.7), rgba(0,120,80,0.3));
+            border-left: 5px solid var(--green);
+            color: var(--green);
+        }
+        .sell {
+            background: linear-gradient(135deg, rgba(50,0,20,0.7), rgba(120,0,60,0.3));
+            border-left: 5px solid var(--red);
+            color: var(--red);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>SOLANA MEME SNIPER</h1>
+    <p class="subtitle">Real-time DexScreener • Whale Alerts • New Launches • Instant Buy Links</p>
+
+    <div class="controls">
+        <input type="text" id="searchQuery" placeholder="Search token (pepe, trump, cat...)">
+        <select id="sortBy">
+            <option value="created_at">Newest First</option>
+            <option value="volume_usd">Top Volume 24h</option>
+            <option value="last_price_change_usd_24h">Biggest Pump 24h</option>
+        </select>
+        <button onclick="fetchCoins()">REFRESH / SEARCH</button>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Token</th>
+                <th>Price</th>
+                <th>24h Δ</th>
+                <th>Vol 24h</th>
+                <th>Liquidity</th>
+                <th>FDV</th>
+                <th>Age</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="coinsTableBody"></tbody>
+    </table>
+
+    <div id="whaleAlerts">
+        <h2>🐳 WHALE ALERTS  (> $10,000)</h2>
+        <p style="text-align:center; color:var(--text-dim);">Click "WHALE RADAR" on a coin to monitor large trades live</p>
+        <ul id="alertsList"></ul>
+    </div>
+
+    <audio id="alertSound" src="https://www.soundjay.com/buttons/beep-07.mp3"></audio>
+
+    <script>
+        const BASE_URL = 'https://api.dexpaprika.com';
+        const NETWORK = 'solana';
+        const WHALE_THRESHOLD = 10000;
+        const POLL_INTERVAL = 20000;
+
+        let selectedPool = null;
+        let alertInterval = null;
+        let lastTxIds = new Set();
+
+        async function fetchCoins() {
+            const query = document.getElementById('searchQuery').value.trim();
+            const sort = document.getElementById('sortBy').value;
+
+            let url = query
+                ? `${BASE_URL}/networks/${NETWORK}/search?query=${encodeURIComponent(query)}`
+                : `${BASE_URL}/networks/${NETWORK}/pools/top?limit=80&order_by=${sort}&sort=desc`;
+
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
+                const items = query ? (data.tokens || []) : (data.pools || []);
+
+                const filtered = items.filter(item => {
+                    const ts = item.tokens || [];
+                    return ts.some(t => t.symbol === 'SOL') &&
+                           !ts.some(t => ['USDC','USDT'].includes(t.symbol)) &&
+                           (item.fdv || 0) < 25000000;
+                });
+
+                displayCoins(filtered);
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        function displayCoins(coins) {
+            const tbody = document.getElementById('coinsTableBody');
+            tbody.innerHTML = coins.length ? '' : '<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-dim);">No results — try different search</td></tr>';
+
+            coins.forEach(coin => {
+                const token = coin.tokens ? coin.tokens.find(t => t.symbol !== 'SOL') : coin;
+                if (!token) return;
+
+                const ageMs = Date.now() - new Date(coin.created_at || coin.added_at || Date.now());
+                const age = ageMs < 3600e3 ? `${Math.floor(ageMs/60000)}m`
+                          : ageMs < 86400e3 ? `${Math.floor(ageMs/3600e3)}h`
+                          : `${Math.floor(ageMs/86400e3)}d`;
+
+                const change = Number(token.last_price_change_usd_24h || 0);
+                const changeClass = change > 0 ? 'change-up' : change < 0 ? 'change-down' : '';
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${token.name || '?'}</strong> (${token.symbol || '??'})</td>
+                    <td>$${Number(token.price_usd || 0).toFixed(8)}</td>
+                    <td class="${changeClass}">${change.toFixed(2)}%</td>
+                    <td>$${Number(token.volume_usd || 0).toLocaleString()}</td>
+                    <td>$${Number(token.liquidity_usd || 0).toLocaleString()}</td>
+                    <td>$${Number(token.fdv || 0).toLocaleString()}</td>
+                    <td>${age} ago</td>
+                    <td>
+                        <a href="https://dexscreener.com/solana/${coin.id || coin.pool_address}" target="_blank">BUY</a>
+                        <button onclick="monitorWhales('${coin.id || coin.pool_address}')" style="margin-left:12px;background:linear-gradient(45deg,var(--green),#00cc7a);color:black;">WHALE RADAR</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function monitorWhales(pool) {
+            selectedPool = pool;
+            document.getElementById('alertsList').innerHTML = '<li class="buy">WHALE RADAR ONLINE — Scanning for big moves...</li>';
+            lastTxIds.clear();
+            if (alertInterval) clearInterval(alertInterval);
+            fetchAlerts();
+            alertInterval = setInterval(fetchAlerts, POLL_INTERVAL);
+        }
+
+        async function fetchAlerts() {
+            if (!selectedPool) return;
+            try {
+                const res = await fetch(`${BASE_URL}/networks/${NETWORK}/pools/${selectedPool}/transactions?limit=40`);
+                const data = await res.json();
+                const txs = data.transactions || [];
+
+                txs.forEach(tx => {
+                    if (lastTxIds.has(tx.id)) return;
+                    lastTxIds.add(tx.id);
+
+                    const usd = Number(tx.amount_usd || 0);
+                    if (usd < WHALE_THRESHOLD) return;
+
+                    const isBuy = (tx.type || '').toLowerCase().includes('buy');
+                    const li = document.createElement('li');
+                    li.className = isBuy ? 'buy' : 'sell';
+                    li.innerHTML = `WHALE ${isBuy ? 'BUY' : 'SELL'} — $${usd.toLocaleString()} — ${new Date(tx.timestamp).toLocaleTimeString()}`;
+                    document.getElementById('alertsList').prepend(li);
+                    document.getElementById('alertSound').play().catch(()=>{});
+                });
+            } catch (e) {}
+        }
+
+        // Start
+        fetchCoins();
+        setInterval(fetchCoins, 45000); // gentle auto-refresh
+    </script>
+</body>
+</html>
