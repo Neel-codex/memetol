@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto-Pilot Solana Meme Scanner</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 { text-align: center; color: #9945FF; }
+        .warning {
+            background-color: #ff4444;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #1e1e1e;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 5px solid #14F195;
+        }
+        .timer-box { font-size: 1.2rem; font-weight: bold; color: #14F195; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #333; }
+        th { background-color: #1e1e1e; color: #14F195; }
+        .safe { color: #14F195; font-weight: bold; }
+        .danger { color: #ff4444; font-weight: bold; }
+        .watch { color: #ffaa00; font-weight: bold; }
+        .loading { font-style: italic; color: #aaaaaa; }
+        .signal-box {
+            padding: 5px 10px;
+            border-radius: 4px;
+            color: #121212;
+            font-weight: bold;
+            text-align: center;
+            display: inline-block;
+            min-width: 80px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🟣 Solana Auto-Scanner 🟢</h1>
+    <div class="warning">
+        Signals are based purely on raw API data (Volume/Liquidity/Safety). They are NOT financial advice.
+    </div>
+
+    <div class="dashboard-header">
+        <div>
+            <strong>Status:</strong> <span id="status" class="safe">System Active</span>
+        </div>
+        <div class="timer-box">
+            Next scan in: <span id="countdown">60</span>s
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Coin</th>
+                <th>Mint Address</th>
+                <th>Price / 1h Change</th>
+                <th>Vol (1h) / Liq</th>
+                <th>RugCheck</th>
+                <th>System Signal</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="coin-table-body">
+            <tr><td colspan="7" class="loading" style="text-align: center;">Initializing first scan...</td></tr>
+        </tbody>
+    </table>
+
+    <script>
+        let countdownValue = 60;
+        let countdownInterval;
+
+        function startCountdown() {
+            clearInterval(countdownInterval);
+            countdownValue = 60;
+            document.getElementById('countdown').innerText = countdownValue;
+            
+            countdownInterval = setInterval(() => {
+                countdownValue--;
+                document.getElementById('countdown').innerText = countdownValue;
+                if (countdownValue <= 0) {
+                    clearInterval(countdownInterval);
+                }
+            }, 1000);
+        }
+
+        async function fetchCoins() {
+            const tableBody = document.getElementById('coin-table-body');
+            const status = document.getElementById('status');
+            
+            status.innerText = 'Fetching market data...';
+            status.className = 'watch';
+
+            try {
+                // Fetch trending Solana pairs
+                const dexResponse = await fetch('https://api.dexscreener.com/latest/dex/search?q=solana%20meme');
+                const dexData = await dexResponse.json();
+                
+                // Filter for solana and minimum liquidity to weed out absolute garbage
+                let pairs = dexData.pairs.filter(p => 
+                    p.chainId === 'solana' && 
+                    p.liquidity && p.liquidity.usd > 10000
+                ).slice(0, 8); // Limit to 8 to respect RugCheck free API limits
+                
+                tableBody.innerHTML = ''; // Clear table for new data
+                status.innerText = 'Auditing contracts...';
+
+                for (const pair of pairs) {
+                    const row = document.createElement('tr');
+                    const mintAddress = pair.baseToken.address;
+                    const priceChange1h = pair.priceChange ? pair.priceChange.h1 : 0;
+                    const volume1h = pair.volume ? pair.volume.h1 : 0;
+                    
+                    // Basic Data Construction
+                    const nameCell = document.createElement('td');
+                    nameCell.innerHTML = `<strong>${pair.baseToken.symbol}</strong><br><span style="font-size: 0.8em; color: #aaa;">${pair.baseToken.name}</span>`;
+                    
+                    const addressCell = document.createElement('td');
+                    addressCell.innerText = `${mintAddress.substring(0, 4)}...${mintAddress.substring(mintAddress.length - 4)}`;
+                    
+                    const priceCell = document.createElement('td');
+                    const changeColor = priceChange1h >= 0 ? '#14F195' : '#ff4444';
+                    priceCell.innerHTML = `$${parseFloat(pair.priceUsd).toFixed(6)}<br><span style="color: ${changeColor}; font-size: 0.9em;">${priceChange1h}% (1h)</span>`;
+
+                    const liqCell = document.createElement('td');
+                    liqCell.innerHTML = `V: $${Math.floor(volume1h).toLocaleString()}<br><span style="color: #aaa; font-size: 0.9em;">L: $${Math.floor(pair.liquidity.usd).toLocaleString()}</span>`;
+
+                    const safetyCell = document.createElement('td');
+                    const signalCell = document.createElement('td');
+                    
+                    safetyCell.innerHTML = '<span class="loading">Scanning...</span>';
+                    signalCell.innerHTML = '<span class="loading">Analyzing...</span>';
+
+                    const actionCell = document.createElement('td');
+                    actionCell.innerHTML = `
+                        <a href="${pair.url}" target="_blank" style="color: #14F195; text-decoration: none;">Chart</a>
+                    `;
+
+                    row.append(nameCell, addressCell, priceCell, liqCell, safetyCell, signalCell, actionCell);
+                    tableBody.appendChild(row);
+
+                    // Signal Logic Variables
+                    let isSafe = false;
+                    let riskDanger = true;
+
+                    // RugCheck API Audit
+                    try {
+                        const rcResponse = await fetch(`https://api.rugcheck.xyz/v1/tokens/${mintAddress}/report/summary`);
+                        if (rcResponse.ok) {
+                            const rcData = await rcResponse.json();
+                            const riskLevel = rcData.risks && rcData.risks.length > 0 
+                                ? rcData.risks.find(r => r.level === "danger") 
+                                : null;
+
+                            if (riskLevel || rcData.tokenType === "Mint Authority Active") {
+                                safetyCell.innerHTML = `<span class="danger">⚠️ Danger</span>`;
+                                riskDanger = true;
+                            } else {
+                                safetyCell.innerHTML = '<span class="safe">✅ Clean</span>';
+                                isSafe = true;
+                                riskDanger = false;
+                            }
+                        } else {
+                            safetyCell.innerHTML = '<span class="watch">API Limit</span>';
+                            riskDanger = false; // Neutral if API fails
+                        }
+                    } catch (e) {
+                        safetyCell.innerHTML = '<span class="watch">Failed</span>';
+                    }
+
+                    // --- SIGNAL GENERATION LOGIC ---
+                    if (riskDanger) {
+                        // Bad contract = instant avoid
+                        signalCell.innerHTML = `<span class="signal-box" style="background-color: #ff4444;">🔴 AVOID</span>`;
+                    } else if (isSafe && priceChange1h > 5 && volume1h > 20000) {
+                        // Clean contract + Uptrend + High Volume = Buy Signal
+                        signalCell.innerHTML = `<span class="signal-box" style="background-color: #14F195;">🟢 HOT/BUY</span>`;
+                    } else if (isSafe && priceChange1h < -10) {
+                        // Clean contract but dumping
+                        signalCell.innerHTML = `<span class="signal-box" style="background-color: #ffaa00;">🟡 DUMPING</span>`;
+                    } else {
+                        // Default state
+                        signalCell.innerHTML = `<span class="signal-box" style="background-color: #555555; color: white;">⚪ WATCH</span>`;
+                    }
+
+                    // Delay to prevent RugCheck from banning your IP
+                    await new Promise(r => setTimeout(r, 400)); 
+                }
+                
+                status.innerText = 'System Active (Sleeping)';
+                status.className = 'safe';
+
+            } catch (error) {
+                console.error(error);
+                status.innerHTML = `<span class="danger">Connection Error</span>`;
+            }
+        }
+
+        // --- AUTOMATION ENGINE ---
+        async function runAutoScanner() {
+            await fetchCoins(); // Run the scan
+            startCountdown();   // Start the 60s timer
+            
+            // Schedule the next scan recursively
+            setTimeout(runAutoScanner, 60000); 
+        }
+
+        // Boot up the system when the page loads
+        window.onload = () => {
+            runAutoScanner();
+        };
+    </script>
+</body>
+</html>
