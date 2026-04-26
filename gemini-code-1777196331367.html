@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solana Meme Coin Scanner</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 { text-align: center; color: #9945FF; } /* Solana Purple */
+        .warning {
+            background-color: #ff4444;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #333;
+        }
+        th { background-color: #1e1e1e; color: #14F195; } /* Solana Green */
+        .safe { color: #14F195; font-weight: bold; }
+        .danger { color: #ff4444; font-weight: bold; }
+        .warning-text { color: #ffaa00; font-weight: bold; }
+        .loading { text-align: center; font-style: italic; color: #aaaaaa; }
+        button {
+            background-color: #14F195;
+            color: #121212;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        button:hover { background-color: #0ed180; }
+    </style>
+</head>
+<body>
+
+    <h1>🟣 Solana Real-Time Scanner 🟢</h1>
+    <div class="warning">
+        Disclaimer: A clean RugCheck report does NOT prevent developers from dumping their tokens or the price crashing.
+    </div>
+
+    <div style="text-align: center;">
+        <button onclick="fetchCoins()">Scan Solana Market</button>
+    </div>
+
+    <div id="status" class="loading"></div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Coin</th>
+                <th>Mint Address</th>
+                <th>Price (USD)</th>
+                <th>Liquidity</th>
+                <th>RugCheck Safety</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="coin-table-body">
+            </tbody>
+    </table>
+
+    <script>
+        async function fetchCoins() {
+            const tableBody = document.getElementById('coin-table-body');
+            const status = document.getElementById('status');
+            tableBody.innerHTML = '';
+            status.innerText = 'Fetching latest volatile Solana pairs from DexScreener...';
+
+            try {
+                // Fetch trending/meme concepts
+                const dexResponse = await fetch('https://api.dexscreener.com/latest/dex/search?q=solana%20meme');
+                const dexData = await dexResponse.json();
+                
+                // STRICTLY filter for Solana chain and baseline liquidity
+                let pairs = dexData.pairs.filter(p => 
+                    p.chainId === 'solana' && 
+                    p.liquidity && 
+                    p.liquidity.usd > 15000
+                ).slice(0, 10);
+                
+                status.innerText = 'Auditing Solana contracts via RugCheck...';
+
+                for (const pair of pairs) {
+                    const row = document.createElement('tr');
+                    const mintAddress = pair.baseToken.address;
+                    
+                    // Basic Data
+                    const nameCell = document.createElement('td');
+                    nameCell.innerText = `${pair.baseToken.name} (${pair.baseToken.symbol})`;
+                    
+                    const addressCell = document.createElement('td');
+                    addressCell.innerText = `${mintAddress.substring(0, 4)}...${mintAddress.substring(mintAddress.length - 4)}`;
+                    
+                    const priceCell = document.createElement('td');
+                    priceCell.innerText = `$${parseFloat(pair.priceUsd).toFixed(6)}`;
+
+                    const liqCell = document.createElement('td');
+                    liqCell.innerText = `$${Math.floor(pair.liquidity.usd).toLocaleString()}`;
+
+                    const safetyCell = document.createElement('td');
+                    safetyCell.innerHTML = '<span class="loading">Scanning...</span>';
+
+                    const actionCell = document.createElement('td');
+                    actionCell.innerHTML = `
+                        <a href="${pair.url}" target="_blank" style="color: #14F195; margin-right: 10px;">Chart</a>
+                        <a href="https://rugcheck.xyz/tokens/${mintAddress}" target="_blank" style="color: #9945FF;">Full Audit</a>
+                    `;
+
+                    row.append(nameCell, addressCell, priceCell, liqCell, safetyCell, actionCell);
+                    tableBody.appendChild(row);
+
+                    // Check Safety using RugCheck API
+                    try {
+                        // The summary endpoint provides a quick "Good" or "Danger" status
+                        const rugCheckUrl = `https://api.rugcheck.xyz/v1/tokens/${mintAddress}/report/summary`;
+                        const rcResponse = await fetch(rugCheckUrl);
+                        
+                        if (rcResponse.ok) {
+                            const rcData = await rcResponse.json();
+                            const riskLevel = rcData.risks && rcData.risks.length > 0 
+                                ? rcData.risks.find(r => r.level === "danger") 
+                                : null;
+
+                            if (riskLevel) {
+                                safetyCell.innerHTML = `<span class="danger">⚠️ Danger (${riskLevel.name})</span>`;
+                            } else if (rcData.tokenType === "Mint Authority Active") {
+                                safetyCell.innerHTML = `<span class="danger">⚠️ Mint Active</span>`;
+                            } else {
+                                safetyCell.innerHTML = '<span class="safe">✅ Good (No major flags)</span>';
+                            }
+                        } else {
+                            safetyCell.innerHTML = '<span class="warning-text">Rate Limited / Unavailable</span>';
+                        }
+                    } catch (e) {
+                        safetyCell.innerHTML = '<span class="danger">Audit Failed</span>';
+                    }
+                    
+                    // Small delay to respect API rate limits
+                    await new Promise(r => setTimeout(r, 300));
+                }
+                status.innerText = 'Scan Complete.';
+
+            } catch (error) {
+                console.error(error);
+                status.innerHTML = `<span class="danger">Error fetching data: ${error.message}</span>`;
+            }
+        }
+    </script>
+</body>
+</html>
