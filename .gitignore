@@ -1,0 +1,14 @@
+# Local config (contains DB credentials) - never commit
+/config/config.php
+
+# Uploaded media
+/assets/uploads/*
+!/assets/uploads/.gitkeep
+!/assets/uploads/.htaccess
+
+# Logs
+*.log
+
+# OS / editor
+.DS_Store
+Thumbs.db
