@@ -1,0 +1,53 @@
+# MemeRadar AI - Apache configuration
+# Compatible with shared cPanel hosting (Apache + mod_rewrite)
+
+Options -Indexes
+DirectoryIndex index.php index.html
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Force HTTPS (uncomment on production with SSL)
+    # RewriteCond %{HTTPS} off
+    # RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    # Pretty API routes: /api/scan -> /api/index.php?route=scan
+    RewriteRule ^api/([a-zA-Z0-9_\-/]+)/?$ api/index.php?route=$1 [QSA,L]
+
+    # Dynamic sitemap
+    RewriteRule ^sitemap\.xml$ sitemap.php [L]
+</IfModule>
+
+# Protect sensitive files
+<FilesMatch "(^\.|composer\.(json|lock)|config\.php|\.sql|\.md|\.log)$">
+    Require all denied
+</FilesMatch>
+
+# Block access to config directory
+RedirectMatch 403 ^/config/.*$
+
+# Security headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+    Header set X-XSS-Protection "1; mode=block"
+</IfModule>
+
+# Caching for static assets
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/svg+xml "access plus 1 month"
+    ExpiresByType text/css "access plus 1 week"
+    ExpiresByType application/javascript "access plus 1 week"
+</IfModule>
+
+# Compression
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json
+</IfModule>
+
+# Custom error pages
+ErrorDocument 404 /index.php?error=404
